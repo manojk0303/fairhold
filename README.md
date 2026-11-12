@@ -5,7 +5,7 @@
 Fairhold holds a client's payment in PayPal, has an AI reviewer check the delivered work against acceptance
 criteria both sides agreed on up front, and releases exactly the earned share. Not all, not nothing.
 
-- **Live demo:** `https://<your-deployment>.vercel.app` (click **Try the bakery demo**)
+- **Live demo:** `https://fairhold-eosin.vercel.app` (click **Try the bakery demo**)
 - **Video (under 3 min):** `https://youtu.be/<id>`
 - Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com/) on the PayPal **sandbox**. No real money moves.
 
