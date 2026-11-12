@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // PGlite (local zero-config DB) ships WASM + data files; keep it out of the bundle.
+  serverExternalPackages: ["@electric-sql/pglite", "@paypal/agent-toolkit"],
   turbopack: {
     rules: {
       "*.css": {

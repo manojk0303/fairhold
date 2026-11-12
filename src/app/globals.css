@@ -1,26 +1,249 @@
 @import "tailwindcss";
 
+/* Fairhold tokens: ink on cool paper; money states carry the only strong colour. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --paper: #f4f5f8;
+  --surface: #ffffff;
+  --surface-2: #eceef4;
+  --ink: #1b1e3c;
+  --ink-2: #555a7a;
+  --ink-3: #8a8fab;
+  --line: #dcdfe8;
+  --accent: #3a3fd4;
+  --accent-ink: #ffffff;
+  --held: #c98a12;
+  --held-soft: #fbf0d9;
+  --released: #1d7a52;
+  --released-soft: #dcf1e6;
+  --returned: #b04a33;
+  --returned-soft: #f8e1db;
+  --focus: #3a3fd4;
+  --radius-lg: 14px;
+  --radius: 9px;
+  --radius-sm: 6px;
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --paper: #111329;
+    --surface: #191c36;
+    --surface-2: #22264a;
+    --ink: #e9eaf5;
+    --ink-2: #a9adc9;
+    --ink-3: #747a9e;
+    --line: #2d3158;
+    --accent: #8b8ff7;
+    --accent-ink: #111329;
+    --held: #e6ac3c;
+    --held-soft: #3a2f17;
+    --released: #4fc28d;
+    --released-soft: #173628;
+    --returned: #e57d63;
+    --returned-soft: #3d221c;
+    --focus: #8b8ff7;
+    color-scheme: dark;
   }
 }
 
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-held: var(--held);
+  --color-held-soft: var(--held-soft);
+  --color-released: var(--released);
+  --color-released-soft: var(--released-soft);
+  --color-returned: var(--returned);
+  --color-returned-soft: var(--returned-soft);
+  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+html {
+  background: var(--paper);
+}
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.num {
+  font-variant-numeric: lining-nums proportional-nums;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.6rem;
+  padding: 0 1.1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid transparent;
+  transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn-primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ink) 85%, var(--accent));
+}
+.btn-release {
+  background: var(--released);
+  color: #fff;
+}
+.btn-release:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--released) 85%, black);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+.btn-sm {
+  height: 2.1rem;
+  padding: 0 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* ---------- Inputs ---------- */
+.field {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.75rem;
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+.field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.field::placeholder {
+  color: var(--ink-3);
+}
+.label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 0.35rem;
+}
+
+/* ---------- Surfaces ---------- */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+/* ---------- Status pills ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.pill::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: currentColor;
+}
+.pill-held {
+  background: var(--held-soft);
+  color: var(--held);
+}
+.pill-released {
+  background: var(--released-soft);
+  color: var(--released);
+}
+.pill-returned {
+  background: var(--returned-soft);
+  color: var(--returned);
+}
+.pill-active {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+
+/* ---------- The split bar: the one signature element ---------- */
+.split {
+  display: flex;
+  height: 0.9rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.split > span {
+  height: 100%;
+  transition: width 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.split .s-held {
+  background: repeating-linear-gradient(-45deg, var(--held), var(--held) 6px, color-mix(in srgb, var(--held) 75%, white) 6px, color-mix(in srgb, var(--held) 75%, white) 12px);
+}
+.split .s-released {
+  background: var(--released);
+}
+.split .s-returned {
+  background: var(--returned);
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.working::before {
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
