@@ -24,6 +24,10 @@ const gridTheme = themeQuartz.withParams({
   fontSize: 13,
   headerFontWeight: 600,
   wrapperBorderRadius: 12,
+  browserColorScheme: "inherit",
+  rowHeight: 48,
+  headerHeight: 44,
+  cellHorizontalPadding: 14,
 });
 
 const PROMPTS = [
@@ -69,26 +73,42 @@ export default function Ops() {
 
   const cols = useMemo<ColDef<Row>[]>(
     () => [
-      { field: "deal_title", headerName: "Agreement", minWidth: 190, flex: 1.4, filter: true },
-      { field: "title", headerName: "Milestone", minWidth: 170, flex: 1.2, filter: true },
+      {
+        headerName: "Agreement / milestone",
+        minWidth: 200,
+        flex: 1.8,
+        filter: true,
+        valueGetter: (p) => (p.data ? `${p.data.deal_title} · ${p.data.title}` : ""),
+        cellRenderer: (p: ICellRendererParams<Row>) =>
+          p.data ? (
+            <div className="leading-tight py-1.5">
+              <div className="font-semibold truncate">{p.data.title}</div>
+              <div className="text-xs text-ink-3 truncate">{p.data.deal_title}</div>
+            </div>
+          ) : null,
+      },
       {
         field: "status",
         headerName: "Status",
-        width: 175,
+        minWidth: 170,
+        flex: 1.4,
         filter: true,
         cellRenderer: (p: ICellRendererParams<Row>) => (p.data ? <StatusPill status={p.data.status} /> : null),
+        cellClass: "flex items-center",
       },
-      { field: "amount", headerName: "Held", width: 105, type: "rightAligned", valueFormatter: (p) => money(p.value, p.data?.currency) },
+      { field: "amount", headerName: "Held", minWidth: 100, flex: 0.8, type: "rightAligned", valueFormatter: (p) => money(p.value, p.data?.currency) },
       {
         headerName: "AI score",
-        width: 110,
+        minWidth: 95,
+        flex: 0.7,
         type: "rightAligned",
         valueGetter: (p) => (p.data?.verdict ? Math.round(p.data.verdict.score * 100) : null),
         valueFormatter: (p) => (p.value === null ? "—" : `${p.value}%`),
       },
       {
         headerName: "Released",
-        width: 115,
+        minWidth: 105,
+        flex: 0.8,
         type: "rightAligned",
         valueGetter: (p) => (p.data ? released(p.data) : 0),
         valueFormatter: (p) => money(p.value, p.data?.currency),
@@ -96,27 +116,18 @@ export default function Ops() {
       },
       {
         headerName: "Returned",
-        width: 110,
+        minWidth: 105,
+        flex: 0.8,
         type: "rightAligned",
         valueGetter: (p) => (p.data ? returned(p.data) : 0),
         valueFormatter: (p) => money(p.value, p.data?.currency),
         cellClass: "text-returned",
       },
-      { field: "fee_amount", headerName: "Fee", width: 90, type: "rightAligned", valueFormatter: (p) => money(p.value, p.data?.currency) },
-      { field: "payout_status", headerName: "Payout", width: 110, valueFormatter: (p) => (p.value ? String(p.value).toLowerCase() : "—") },
-      {
-        headerName: "Ruling",
-        width: 95,
-        valueGetter: (p) => (p.data?.ruling ? `${p.data.ruling.percentToFreelancer}%` : "—"),
-      },
-      { field: "freelancer_name", headerName: "Freelancer", width: 140, filter: true },
-      { field: "paypal_order_id", headerName: "PayPal order", width: 175, cellClass: "font-mono text-xs" },
-      { field: "authorization_id", headerName: "Authorization", width: 175, cellClass: "font-mono text-xs" },
-      { field: "capture_id", headerName: "Capture", width: 175, cellClass: "font-mono text-xs" },
+      { field: "paypal_order_id", headerName: "PayPal order", minWidth: 150, flex: 1, cellClass: "font-mono text-xs" },
       {
         field: "updated_at",
         headerName: "Updated",
-        width: 150,
+        hide: true,
         sort: "desc",
         valueFormatter: (p) => new Date(p.value).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }),
       },
@@ -162,8 +173,8 @@ export default function Ops() {
         ))}
       </dl>
 
-      <div className="mt-6 grid xl:grid-cols-[minmax(0,1fr)_400px] gap-6 items-start">
-        <div className="h-[560px]">
+      <div className="mt-6 grid xl:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
+        <div>
           {err && <p className="text-returned text-sm mb-2">{err}</p>}
           <AgGridReact<Row>
             theme={gridTheme}
@@ -172,8 +183,10 @@ export default function Ops() {
             columnDefs={cols}
             getRowId={(p) => p.data.id}
             defaultColDef={{ sortable: true, resizable: true }}
+            domLayout="autoHeight"
             pagination
-            paginationPageSize={20}
+            paginationPageSize={10}
+            paginationPageSizeSelector={false}
             overlayNoRowsTemplate="No milestones yet. Start the bakery demo from the home page."
           />
         </div>

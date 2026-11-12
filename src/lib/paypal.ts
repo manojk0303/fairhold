@@ -8,7 +8,7 @@ import "server-only";
 
 const BASE = process.env.PAYPAL_API_BASE ?? "https://api-m.sandbox.paypal.com";
 
-let cachedToken: { value: string; expiresAt: number } | null = null;
+let cachedToken: { value: string; expiresAt: number; clientId: string } | null = null;
 
 export class PayPalError extends Error {
   constructor(
@@ -25,8 +25,8 @@ export function paypalConfigured() {
 }
 
 export async function getAccessToken(): Promise<string> {
-  if (cachedToken && cachedToken.expiresAt > Date.now() + 60_000) return cachedToken.value;
   const id = process.env.PAYPAL_CLIENT_ID;
+  if (cachedToken && cachedToken.clientId === id && cachedToken.expiresAt > Date.now() + 60_000) return cachedToken.value;
   const secret = process.env.PAYPAL_CLIENT_SECRET;
   if (!id || !secret) throw new PayPalError("PayPal credentials are not configured", 500, null);
   const res = await fetch(`${BASE}/v1/oauth2/token`, {
@@ -40,7 +40,7 @@ export async function getAccessToken(): Promise<string> {
   });
   const json = await res.json();
   if (!res.ok) throw new PayPalError("PayPal auth failed", res.status, json);
-  cachedToken = { value: json.access_token, expiresAt: Date.now() + json.expires_in * 1000 };
+  cachedToken = { value: json.access_token, expiresAt: Date.now() + json.expires_in * 1000, clientId: id };
   return cachedToken.value;
 }
 

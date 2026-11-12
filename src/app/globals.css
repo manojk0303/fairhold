@@ -247,3 +247,12 @@ body {
     transition: none !important;
   }
 }
+
+/* AG Grid: proportional figures (tabular ones put a wide gap before the decimal point) */
+.ag-root-wrapper .ag-cell,
+.ag-root-wrapper .ag-header-cell-text {
+  font-variant-numeric: lining-nums proportional-nums;
+}
+.ag-root-wrapper .ag-cell .pill {
+  line-height: 1.2;
+}
