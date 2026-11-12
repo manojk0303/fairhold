@@ -72,7 +72,7 @@ export function MilestoneCard({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-sm text-ink-2 num">Milestone {index + 1}</p>
-            <h2 id={`ms-${m.id}`} className="text-xl font-semibold leading-snug">
+            <h2 id={`ms-${m.id}`} className="text-xl font-semibold leading-snug scroll-mt-24">
               {m.title}
             </h2>
             <p className="mt-1 text-sm text-ink-2">{m.summary}</p>

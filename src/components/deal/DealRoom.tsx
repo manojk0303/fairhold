@@ -7,6 +7,7 @@ import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import { api, money } from "@/components/ui";
 import { MilestoneCard } from "./MilestoneCard";
 import { Timeline } from "./Timeline";
+import { NextStep } from "./NextStep";
 import type { DealView } from "./types";
 
 type Config = { paypalClientId: string | null; paypalReady: boolean; aiReady: boolean; model: string };
@@ -107,7 +108,7 @@ export function DealRoom() {
             >
               Client · {deal.client_name.split(" ")[0]}
             </Link>
-            {deal.is_demo && (
+            {deal.is_demo ? (
               <Link
                 href={view.links.freelancer}
                 className={`btn btn-sm ${role === "freelancer" ? "btn-primary" : "btn-ghost"}`}
@@ -115,7 +116,17 @@ export function DealRoom() {
               >
                 Freelancer · {deal.freelancer_name.split(" ")[0]}
               </Link>
+            ) : (
+              <a href={view.links.freelancer} target="_blank" rel="noreferrer" className="btn btn-sm btn-ghost">
+                Open {deal.freelancer_name.split(" ")[0]}’s view
+              </a>
             )}
+          </div>
+        )}
+        {!view.links && role === "freelancer" && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-ink-2">You are</span>
+            <span className="btn btn-sm btn-primary pointer-events-none">Freelancer · {deal.freelancer_name.split(" ")[0]}</span>
           </div>
         )}
       </div>
@@ -147,6 +158,8 @@ export function DealRoom() {
           ))}
         </dl>
       )}
+
+      {role !== "viewer" && <NextStep view={view} />}
 
       <div className="mt-8 grid lg:grid-cols-[minmax(0,1fr)_340px] gap-8 items-start">
         <div className="space-y-6 min-w-0">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry, themeQuartz, type ColDef, type ICellRendererParams } from "ag-grid-community";
 import { api, money, StatusPill, Spinner } from "@/components/ui";
@@ -41,6 +42,7 @@ const released = (r: Row) => r.captured_amount ?? 0;
 const returned = (r: Row) => (r.status === "released" || r.status === "refunded" ? r.amount - (r.captured_amount ?? 0) : 0);
 
 export default function Ops() {
+  const router = useRouter();
   const [rows, setRows] = useState<Row[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [msgs, setMsgs] = useState<Msg[]>([]);
@@ -156,7 +158,7 @@ export default function Ops() {
   return (
     <div className="mx-auto max-w-[90rem] px-4 sm:px-6 py-8">
       <h1 className="text-3xl font-bold tracking-tight">Operations</h1>
-      <p className="mt-1 text-ink-2">Every hold, verdict and payout across Fairhold, reconciled against PayPal.</p>
+      <p className="mt-1 text-ink-2">Every hold, verdict and payout across Fairhold, reconciled against PayPal. Click a row to open its agreement.</p>
 
       <dl className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-px overflow-hidden rounded-xl border border-line bg-line">
         {[
@@ -182,6 +184,8 @@ export default function Ops() {
             loading={rows === null}
             columnDefs={cols}
             getRowId={(p) => p.data.id}
+            onRowClicked={(e) => e.data && router.push(`/deal/${e.data.deal_id}`)}
+            rowClass="cursor-pointer"
             defaultColDef={{ sortable: true, resizable: true }}
             domLayout="autoHeight"
             pagination
